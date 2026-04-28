@@ -1,0 +1,692 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0b0b10;--s1:#13131b;--s2:#1a1a25;--s3:#21212f;--s4:#28283a;
+  --bd:#2e2e42;--bd2:#3a3a52;
+  --ac:#7c6ff7;--ac2:#a89cf7;--acg:rgba(124,111,247,.15);--acb:rgba(124,111,247,.08);
+  --tx:#eeedf8;--t2:#8e8caa;--t3:#52506a;
+  --gr:#4ade80;--am:#fbbf24;--rd:#f87171;
+  --r:12px;--rs:8px;--rl:18px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+
+/* ── UTILS ── */
+.hidden{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+
+/* ══ AUTH ══ */
+.auth-wrap{min-height:100vh;display:flex;align-items:stretch}
+.auth-left{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 40px;background:var(--bg)}
+.auth-right{width:420px;background:var(--s1);border-left:1px solid var(--bd);display:flex;flex-direction:column;padding:48px 40px}
+.auth-brand{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--tx);letter-spacing:-1px}
+.auth-brand span{color:var(--ac)}
+.auth-tagline{font-size:13.5px;color:var(--t2);margin-bottom:36px;line-height:1.6;margin-top:6px}
+.auth-feat{display:flex;align-items:flex-start;gap:13px;margin-bottom:20px}
+.af-icon{width:34px;height:34px;border-radius:9px;background:var(--acg);border:1px solid rgba(124,111,247,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.af-title{font-size:13.5px;font-weight:600;color:var(--tx);margin-bottom:2px}
+.af-desc{font-size:12px;color:var(--t2);line-height:1.5}
+.auth-form-title{font-family:'Syne',sans-serif;font-size:21px;font-weight:700;color:var(--tx);margin-bottom:4px}
+.auth-form-sub{font-size:13px;color:var(--t2);margin-bottom:28px}
+.auth-form-sub a{color:var(--ac);cursor:pointer}
+.auth-form-sub a:hover{text-decoration:underline}
+.form-field{margin-bottom:14px}
+.form-label{display:block;font-size:11.5px;font-weight:600;color:var(--t2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.form-inp{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:var(--rs);padding:11px 13px;font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border .15s,box-shadow .15s}
+.form-inp:focus{border-color:var(--ac);box-shadow:0 0 0 3px var(--acg)}
+.form-inp::placeholder{color:var(--t3)}
+.form-inp.err{border-color:var(--rd)}
+.err-msg{font-size:12px;color:var(--rd);margin-top:4px;display:none}
+.err-msg.show{display:block}
+.pw-wrap{position:relative}
+.pw-wrap .form-inp{padding-right:42px}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--t3);cursor:pointer;padding:4px;display:flex;align-items:center}
+.str-bar{display:flex;gap:4px;margin-top:5px}
+.str-seg{height:3px;flex:1;border-radius:2px;background:var(--bd);transition:background .2s}
+.str-lbl{font-size:11px;color:var(--t3);margin-top:3px}
+.btn-auth{width:100%;padding:12px;background:var(--ac);border:none;border-radius:var(--rs);color:#fff;font-size:14.5px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.2px;margin-top:4px}
+.btn-auth:hover{opacity:.88}
+.btn-auth:active{transform:scale(.98)}
+.divider{display:flex;align-items:center;gap:10px;margin:18px 0;color:var(--t3);font-size:12px}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--bd)}
+.btn-google{width:100%;padding:11px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);color:var(--t2);font-size:13.5px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .15s}
+.btn-google:hover{background:var(--s3);color:var(--tx)}
+.remember-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.check-wrap{display:flex;align-items:center;gap:7px;cursor:pointer}
+.check-wrap input{accent-color:var(--ac);width:14px;height:14px}
+.check-label{font-size:13px;color:var(--t2)}
+.forgot-link{font-size:13px;color:var(--ac);cursor:pointer}
+.forgot-link:hover{text-decoration:underline}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ══ APP SHELL ══ */
+.app-shell{display:flex;min-height:100vh;position:relative}
+
+/* OVERLAY */
+.sidebar-overlay{display:none;position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:40}
+.sidebar-overlay.open{display:block}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:var(--s1);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;position:relative;z-index:50;transition:transform .25s}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.sb-brand{font-family:'Syne',sans-serif;font-size:19px;font-weight:800;color:var(--tx);letter-spacing:-.5px}
+.sb-brand span{color:var(--ac)}
+.sb-close{display:none;background:none;border:none;color:var(--t2);cursor:pointer;padding:4px}
+.sb-user{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--bd);margin-bottom:4px}
+.sb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--ac),#4f46e5);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-uemail{font-size:10.5px;color:var(--t3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav{padding:6px 10px;flex:1}
+.nav-sec{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--t3);padding:0 8px;margin:12px 0 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--rs);cursor:pointer;font-size:13px;font-weight:500;color:var(--t2);transition:all .12s;margin-bottom:1px;border:1px solid transparent;user-select:none}
+.nav-item svg{flex-shrink:0;opacity:.75}
+.nav-item:hover{background:var(--s2);color:var(--tx)}
+.nav-item.active{background:var(--acb);color:var(--ac2);border-color:rgba(124,111,247,.2)}
+.nav-item.active svg{opacity:1}
+.sb-bottom{padding:12px;border-top:1px solid var(--bd)}
+.btn-logout{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border-radius:var(--rs);background:none;border:1px solid var(--bd);color:var(--t2);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .12s}
+.btn-logout:hover{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.3);color:var(--rd)}
+
+/* MAIN */
+.app-main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{height:56px;background:var(--s1);border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;padding:0 20px;flex-shrink:0;gap:12px}
+.tb-left{display:flex;align-items:center;gap:12px}
+.hamburger{display:none;background:none;border:1px solid var(--bd);border-radius:var(--rs);color:var(--t2);cursor:pointer;padding:7px;flex-shrink:0}
+.hamburger:hover{background:var(--s2);color:var(--tx)}
+.tb-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--tx)}
+.tb-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tb-btn{background:var(--s2);border:1px solid var(--bd);color:var(--t2);border-radius:var(--rs);padding:7px 12px;font-size:12.5px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .12s;font-weight:500;white-space:nowrap}
+.tb-btn:hover{background:var(--s3);color:var(--tx)}
+
+/* CONTENT */
+.content{flex:1;padding:20px;overflow-y:auto}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:14px 16px;position:relative;overflow:hidden}
+.stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac);opacity:.4}
+.stat-lbl{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;font-weight:600}
+.stat-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--tx);line-height:1}
+.stat-hint{font-size:11px;color:var(--t3);margin-top:4px;display:flex;align-items:center;gap:4px}
+.dot{width:5px;height:5px;border-radius:50%;display:inline-block;flex-shrink:0}
+
+/* WORKSPACE */
+.workspace{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}
+
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--rl);overflow:hidden}
+.card-hd{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'Syne',sans-serif;font-size:13.5px;font-weight:700;color:var(--tx)}
+.chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:600}
+.chip-p{background:var(--acg);color:var(--ac2);border:1px solid rgba(124,111,247,.2)}
+.chip-g{background:rgba(74,222,128,.1);color:#4ade80;border:1px solid rgba(74,222,128,.2)}
+.card-bd{padding:18px 20px}
+
+/* TABS */
+.tabs{display:flex;gap:4px;background:var(--s2);padding:4px;border-radius:var(--rs);margin-bottom:18px;flex-wrap:wrap}
+.tab{flex:1;padding:7px 6px;border-radius:6px;font-size:11.5px;font-weight:600;cursor:pointer;text-align:center;color:var(--t2);transition:all .12s;white-space:nowrap;min-width:50px}
+.tab.active{background:var(--s3);color:var(--tx)}
+.tab:hover:not(.active){color:var(--tx)}
+
+/* FORM */
+.fg{margin-bottom:13px}
+.fl{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.fi,.ft,.fs{width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);border-radius:var(--rs);padding:10px 12px;font-size:13.5px;font-family:'DM Sans',sans-serif;outline:none;transition:border .12s}
+.fi:focus,.ft:focus,.fs:focus{border-color:var(--ac)}
+.fi::placeholder,.ft::placeholder{color:var(--t3)}
+.ft{resize:vertical;min-height:68px;line-height:1.5}
+.fs option{background:var(--s2)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sdiv{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--t3);font-weight:700;margin:16px 0 10px;display:flex;align-items:center;gap:8px}
+.sdiv::after{content:'';flex:1;height:1px;background:var(--bd)}
+.crow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cfield{display:flex;align-items:center;gap:8px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:8px 10px;cursor:pointer;transition:border .12s}
+.cfield:hover{border-color:var(--bd2)}
+.cswatch{width:22px;height:22px;border-radius:4px;border:1px solid rgba(255,255,255,.1);flex-shrink:0}
+.chex{font-size:12px;color:var(--t2);font-family:monospace;flex:1}
+.cinput{position:absolute;opacity:0;width:0;height:0}
+.srow{display:flex;align-items:center;gap:10px}
+.sslider{flex:1;-webkit-appearance:none;appearance:none;height:3px;border-radius:2px;background:var(--bd2);outline:none;cursor:pointer}
+.sslider::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--ac);cursor:pointer;box-shadow:0 0 0 3px var(--acg)}
+.sval{font-size:12.5px;font-weight:600;color:var(--tx);min-width:30px;text-align:right}
+.ecopts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:13px}
+.ecopt{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:8px 5px;cursor:pointer;text-align:center;transition:all .12s}
+.ecopt:hover{background:var(--s3)}
+.ecopt.active{border-color:var(--ac);background:var(--acb)}
+.ecopt-lbl{font-size:10.5px;color:var(--t2);font-weight:600}
+.ecopt.active .ecopt-lbl{color:var(--ac2)}
+.ecopt-ico{font-size:15px;margin-bottom:2px}
+.btngen{width:100%;padding:12px;background:var(--ac);border:none;border-radius:var(--rs);color:#fff;font-size:14px;font-weight:700;font-family:'Syne',sans-serif;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.2px;margin-top:2px}
+.btngen:hover{opacity:.88}
+.btngen:active{transform:scale(.98)}
+
+/* PREVIEW */
+.qr-box{display:flex;align-items:center;justify-content:center;min-height:200px;background:var(--s2);border-radius:var(--r);margin-bottom:12px}
+#qr-out{display:flex;align-items:center;justify-content:center;padding:12px}
+#qr-out canvas,#qr-out img{border-radius:6px!important}
+.qr-ph{text-align:center;padding:32px 16px}
+.qr-ph-ico{font-size:36px;opacity:.2;margin-bottom:8px}
+.qr-ph-txt{font-size:12.5px;color:var(--t3);line-height:1.6}
+.meta-box{background:var(--s2);border-radius:var(--rs);padding:10px 12px;margin-bottom:11px;display:none}
+.meta-box.show{display:block}
+.meta-row{display:flex;justify-content:space-between;font-size:11.5px;margin-bottom:3px}
+.meta-k{color:var(--t3)}
+.meta-v{color:var(--t2);font-weight:500}
+.actbtns{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:8px}
+.btndl{padding:9px;border:1px solid var(--bd);background:var(--s2);color:var(--t2);border-radius:var(--rs);font-size:12.5px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;gap:5px}
+.btndl:hover{background:var(--s3);color:var(--tx)}
+.btncopy{padding:9px;border:1px solid var(--bd);background:var(--s2);color:var(--t2);border-radius:var(--rs);font-size:12.5px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .12s;display:flex;align-items:center;justify-content:center;gap:5px;width:100%}
+.btncopy:hover{background:var(--s3);color:var(--tx)}
+.btncopy.ok{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.25);color:var(--gr)}
+
+/* HISTORY */
+.hist-list{display:flex;flex-direction:column;gap:7px}
+.hist-item{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rs);padding:9px 11px;cursor:pointer;transition:all .12s}
+.hist-item:hover{border-color:var(--bd2);background:var(--s3)}
+.hist-thumb{width:38px;height:38px;background:var(--s3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+.hist-thumb canvas,.hist-thumb img{width:34px!important;height:34px!important}
+.hist-info{flex:1;min-width:0}
+.hist-lbl{font-size:12.5px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-meta{font-size:10.5px;color:var(--t3);margin-top:1px}
+.hist-badge{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:700;background:var(--acg);color:var(--ac2);flex-shrink:0}
+.empty-hist{text-align:center;padding:18px;color:var(--t3);font-size:12.5px;line-height:1.6}
+
+/* TOAST */
+.toast{position:absolute;bottom:16px;right:16px;background:var(--s2);border:1px solid var(--bd2);color:var(--tx);padding:10px 14px;border-radius:var(--rs);font-size:12.5px;font-weight:500;transform:translateY(60px);opacity:0;transition:all .25s;z-index:200;display:flex;align-items:center;gap:7px;max-width:240px}
+.toast.show{transform:translateY(0);opacity:1}
+.tdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* ══ RESPONSIVE BREAKPOINTS ══ */
+
+/* TABLET: ≤900px — collapse sidebar to overlay */
+@media(max-width:900px){
+  .auth-left{display:none}
+  .auth-right{width:100%;border-left:none;padding:40px 28px}
+  .sidebar{position:absolute;left:0;top:0;bottom:0;min-height:100%;transform:translateX(-100%);z-index:50}
+  .sidebar.open{transform:translateX(0)}
+  .sb-close{display:flex}
+  .hamburger{display:flex}
+  .workspace{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+
+/* MOBILE: ≤600px — further tighten */
+@media(max-width:600px){
+  .content{padding:12px}
+  .stats{grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+  .stat{padding:11px 12px}
+  .stat-val{font-size:19px}
+  .card-bd{padding:14px}
+  .card-hd{padding:13px 14px}
+  .tabs{gap:3px}
+  .tab{min-width:40px;font-size:11px;padding:6px 4px}
+  .fr{grid-template-columns:1fr}
+  .crow{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+  .auth-right{padding:28px 18px}
+  .auth-form-title{font-size:19px}
+  .topbar{padding:0 12px}
+  .tb-btn{padding:6px 10px;font-size:12px}
+  .ecopts{grid-template-columns:repeat(3,1fr)}
+}
+
+/* VERY SMALL: ≤380px */
+@media(max-width:380px){
+  .stats{grid-template-columns:1fr 1fr}
+  .actbtns{grid-template-columns:1fr 1fr}
+  .fr{grid-template-columns:1fr}
+}
+</style>
+
+<h2 class="sr-only">QRaft — QR Code Generator with authentication dashboard</h2>
+
+<div style="position:relative;min-height:100vh" id="app">
+
+<!-- ══ LOGIN ══ -->
+<div id="pg-login" class="auth-wrap">
+  <div class="auth-left">
+    <div style="max-width:400px;width:100%">
+      <div class="auth-brand">QR<span>aft</span></div>
+      <div class="auth-tagline">Generate beautiful QR codes for URLs, WiFi,<br>contacts and more — in seconds.</div>
+      <div class="auth-feat"><div class="af-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><circle cx="12" cy="12" r="2"/></svg></div><div><div class="af-title">6 QR types</div><div class="af-desc">URL, Text, Email, Phone, WiFi, vCard</div></div></div>
+      <div class="auth-feat"><div class="af-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2.5"/></svg></div><div><div class="af-title">Live preview</div><div class="af-desc">See your QR update as you type</div></div></div>
+      <div class="auth-feat"><div class="af-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--ac2)" stroke-width="1.8"><path d="M8 1v9M5 7l3 3 3-3M2 13h12"/></svg></div><div><div class="af-title">PNG & SVG export</div><div class="af-desc">Download in any size up to 600px</div></div></div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="auth-form-title">Welcome back</div>
+      <div class="auth-form-sub">No account? <a onclick="showPage('pg-signup')">Sign up free</a></div>
+      <div class="form-field"><label class="form-label">Email address</label><input class="form-inp" id="li-email" type="email" placeholder="you@example.com" oninput="clearErr('li')"/><div class="err-msg" id="li-err">Incorrect email or password.</div></div>
+      <div class="form-field"><label class="form-label">Password</label><div class="pw-wrap"><input class="form-inp" id="li-pass" type="password" placeholder="Your password" oninput="clearErr('li')"/><button class="pw-toggle" onclick="togglePw('li-pass',this)" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2.5"/></svg></button></div></div>
+      <div class="remember-row"><label class="check-wrap"><input type="checkbox" id="li-rem"/><span class="check-label">Remember me</span></label><a class="forgot-link" onclick="showPage('pg-forgot')">Forgot password?</a></div>
+      <button class="btn-auth" onclick="doLogin()">Sign in</button>
+      <div class="divider">or</div>
+      <button class="btn-google" onclick="demoToast('Google OAuth needs a backend.')"><svg width="15" height="15" viewBox="0 0 16 16"><path fill="#4285F4" d="M14.9 8.16c0-.52-.04-1.02-.13-1.5H8v2.84h3.87a3.31 3.31 0 01-1.44 2.17v1.8h2.33c1.36-1.25 2.14-3.1 2.14-5.31z"/><path fill="#34A853" d="M8 15c1.95 0 3.58-.65 4.77-1.75l-2.33-1.8c-.65.43-1.47.69-2.44.69-1.88 0-3.47-1.27-4.03-2.97H1.57v1.85A7 7 0 008 15z"/><path fill="#FBBC05" d="M3.97 9.17A4.21 4.21 0 013.75 8c0-.41.07-.81.22-1.17V4.98H1.57A7 7 0 001 8c0 1.13.27 2.2.57 3.02l2.4-1.85z"/><path fill="#EA4335" d="M8 3.86c1.06 0 2.01.36 2.76 1.08l2.07-2.07A7 7 0 008 1a7 7 0 00-6.43 3.98l2.4 1.85C4.53 5.13 6.12 3.86 8 3.86z"/></svg>Continue with Google</button>
+      <div style="font-size:11px;color:var(--t3);text-align:center;margin-top:20px">By signing in you agree to our <a style="color:var(--ac);cursor:pointer">Terms</a> & <a style="color:var(--ac);cursor:pointer">Privacy</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SIGNUP ══ -->
+<div id="pg-signup" class="auth-wrap" style="display:none">
+  <div class="auth-left">
+    <div style="max-width:400px;width:100%">
+      <div class="auth-brand">QR<span>aft</span></div>
+      <div class="auth-tagline">Join thousands creating beautiful QR codes every day.</div>
+      <div style="background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:18px 20px;margin-top:20px">
+        <div style="font-size:11px;color:var(--t3);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-bottom:12px">Free plan includes</div>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--gr)" stroke-width="2"><path d="M2 7l3.5 3.5L12 4"/></svg>Unlimited QR codes</div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--gr)" stroke-width="2"><path d="M2 7l3.5 3.5L12 4"/></svg>PNG & SVG export</div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--gr)" stroke-width="2"><path d="M2 7l3.5 3.5L12 4"/></svg>Custom colors & sizes</div>
+          <div style="display:flex;align-items:center;gap:9px;font-size:13px;color:var(--t2)"><svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="var(--gr)" stroke-width="2"><path d="M2 7l3.5 3.5L12 4"/></svg>Session history</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="auth-form-title">Create account</div>
+      <div class="auth-form-sub">Have an account? <a onclick="showPage('pg-login')">Sign in</a></div>
+      <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-field"><label class="form-label">First name</label><input class="form-inp" id="su-first" placeholder="John" oninput="clearErr('su')"/></div>
+        <div class="form-field"><label class="form-label">Last name</label><input class="form-inp" id="su-last" placeholder="Doe" oninput="clearErr('su')"/></div>
+      </div>
+      <div class="form-field"><label class="form-label">Email address</label><input class="form-inp" id="su-email" type="email" placeholder="you@example.com" oninput="clearErr('su')"/><div class="err-msg" id="su-err">Please fill all fields correctly.</div></div>
+      <div class="form-field"><label class="form-label">Password</label><div class="pw-wrap"><input class="form-inp" id="su-pass" type="password" placeholder="Min 8 characters" oninput="checkStr(this.value);clearErr('su')"/><button class="pw-toggle" onclick="togglePw('su-pass',this)" type="button"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2.5"/></svg></button></div><div class="str-bar" id="str-bar"><div class="str-seg" id="s1"></div><div class="str-seg" id="s2"></div><div class="str-seg" id="s3"></div><div class="str-seg" id="s4"></div></div><div class="str-lbl" id="str-lbl"></div></div>
+      <div class="form-field"><label class="form-label">Confirm password</label><input class="form-inp" id="su-conf" type="password" placeholder="Repeat password" oninput="clearErr('su')"/></div>
+      <button class="btn-auth" onclick="doSignup()">Create account</button>
+      <div class="divider">or</div>
+      <button class="btn-google" onclick="demoToast('Google OAuth needs a backend.')"><svg width="15" height="15" viewBox="0 0 16 16"><path fill="#4285F4" d="M14.9 8.16c0-.52-.04-1.02-.13-1.5H8v2.84h3.87a3.31 3.31 0 01-1.44 2.17v1.8h2.33c1.36-1.25 2.14-3.1 2.14-5.31z"/><path fill="#34A853" d="M8 15c1.95 0 3.58-.65 4.77-1.75l-2.33-1.8c-.65.43-1.47.69-2.44.69-1.88 0-3.47-1.27-4.03-2.97H1.57v1.85A7 7 0 008 15z"/><path fill="#FBBC05" d="M3.97 9.17A4.21 4.21 0 013.75 8c0-.41.07-.81.22-1.17V4.98H1.57A7 7 0 001 8c0 1.13.27 2.2.57 3.02l2.4-1.85z"/><path fill="#EA4335" d="M8 3.86c1.06 0 2.01.36 2.76 1.08l2.07-2.07A7 7 0 008 1a7 7 0 00-6.43 3.98l2.4 1.85C4.53 5.13 6.12 3.86 8 3.86z"/></svg>Continue with Google</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FORGOT ══ -->
+<div id="pg-forgot" class="auth-wrap" style="display:none">
+  <div class="auth-left">
+    <div style="max-width:340px;width:100%;text-align:center">
+      <div style="width:60px;height:60px;border-radius:15px;background:var(--acg);border:1px solid rgba(124,111,247,.25);display:flex;align-items:center;justify-content:center;margin:0 auto 20px"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--ac2)" stroke-width="1.8"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></div>
+      <div class="auth-brand" style="justify-content:center">Reset password</div>
+      <div class="auth-tagline" style="text-align:center;margin-top:8px">Enter your email and we'll send a reset link straight to your inbox.</div>
+    </div>
+  </div>
+  <div class="auth-right">
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+      <div class="auth-form-title">Forgot password?</div>
+      <div class="auth-form-sub">Remember it? <a onclick="showPage('pg-login')">Back to login</a></div>
+      <div class="form-field"><label class="form-label">Email address</label><input class="form-inp" id="fp-email" type="email" placeholder="you@example.com"/></div>
+      <button class="btn-auth" onclick="doForgot()">Send reset link</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div id="pg-dash" class="app-shell" style="display:none">
+  <div class="sidebar-overlay" id="sb-overlay" onclick="closeSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-logo">
+      <div class="sb-brand">QR<span>aft</span></div>
+      <button class="sb-close" onclick="closeSidebar()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 2l12 12M14 2L2 14"/></svg></button>
+    </div>
+    <div class="sb-user">
+      <div class="sb-avatar" id="sb-av">JD</div>
+      <div style="min-width:0"><div class="sb-uname" id="sb-name">John Doe</div><div class="sb-uemail" id="sb-email">john@example.com</div></div>
+    </div>
+    <nav class="nav">
+      <div class="nav-sec">Studio</div>
+      <div class="nav-item active" onclick="setNav(this,'QR Generator')">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><circle cx="12" cy="12" r="2"/></svg>Generator
+      </div>
+      <div class="nav-item" onclick="setNav(this,'History')">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4h12M4 8h8M6 12h4"/></svg>History
+      </div>
+      <div class="nav-item" onclick="setNav(this,'Templates')">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h5v5H9z"/></svg>Templates
+      </div>
+      <div class="nav-sec">Account</div>
+      <div class="nav-item" onclick="setNav(this,'Profile')">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>Profile
+      </div>
+      <div class="nav-item" onclick="setNav(this,'Settings')">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.3 3.3l1.4 1.4M11.3 11.3l1.4 1.4M3.3 12.7l1.4-1.4M11.3 4.7l1.4-1.4"/></svg>Settings
+      </div>
+    </nav>
+    <div class="sb-bottom">
+      <button class="btn-logout" onclick="doLogout()">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 8H2M6 4l-4 4 4 4M10 3h3a1 1 0 011 1v8a1 1 0 01-1 1h-3"/></svg>Sign out
+      </button>
+    </div>
+  </aside>
+
+  <div class="app-main">
+    <div class="topbar">
+      <div class="tb-left">
+        <button class="hamburger" id="hamburger" onclick="openSidebar()">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+        </button>
+        <div class="tb-title" id="tb-title">QR Generator</div>
+      </div>
+      <div class="tb-right">
+        <button class="tb-btn" onclick="clearAll()">Clear</button>
+        <div class="sb-avatar" id="tb-av" style="width:30px;height:30px;font-size:11px;cursor:pointer" onclick="openSidebar()">JD</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="stats">
+        <div class="stat"><div class="stat-lbl">QRs Created</div><div class="stat-val" id="st-count">0</div><div class="stat-hint"><span class="dot" style="background:var(--gr)"></span>This session</div></div>
+        <div class="stat"><div class="stat-lbl">Last Type</div><div class="stat-val" id="st-type" style="font-size:14px;padding-top:5px">—</div><div class="stat-hint">QR category</div></div>
+        <div class="stat"><div class="stat-lbl">Error Level</div><div class="stat-val" id="st-ec" style="font-size:17px;padding-top:2px">H</div><div class="stat-hint"><span class="dot" style="background:var(--am)"></span>30% recovery</div></div>
+        <div class="stat"><div class="stat-lbl">Output Size</div><div class="stat-val" id="st-size">300</div><div class="stat-hint">pixels × pixels</div></div>
+      </div>
+
+      <div class="workspace">
+        <div>
+          <div class="card">
+            <div class="card-hd"><span class="card-title">QR Builder</span><span class="chip chip-p">Free</span></div>
+            <div class="card-bd">
+              <div class="tabs">
+                <div class="tab active" onclick="setType(this,'url')">URL</div>
+                <div class="tab" onclick="setType(this,'text')">Text</div>
+                <div class="tab" onclick="setType(this,'email')">Email</div>
+                <div class="tab" onclick="setType(this,'phone')">Phone</div>
+                <div class="tab" onclick="setType(this,'wifi')">WiFi</div>
+                <div class="tab" onclick="setType(this,'vcard')">vCard</div>
+              </div>
+              <div id="f-url"><div class="fg"><label class="fl">Website URL</label><input class="fi" id="url-i" placeholder="https://example.com" oninput="liveGen()"/></div></div>
+              <div id="f-text" style="display:none"><div class="fg"><label class="fl">Text content</label><textarea class="ft" id="txt-i" placeholder="Enter any text…" oninput="liveGen()"></textarea></div></div>
+              <div id="f-email" style="display:none">
+                <div class="fg"><label class="fl">Email address</label><input class="fi" id="em-a" placeholder="hello@example.com" oninput="liveGen()"/></div>
+                <div class="fr"><div class="fg"><label class="fl">Subject</label><input class="fi" id="em-s" placeholder="Subject" oninput="liveGen()"/></div><div class="fg"><label class="fl">Body</label><input class="fi" id="em-b" placeholder="Message" oninput="liveGen()"/></div></div>
+              </div>
+              <div id="f-phone" style="display:none"><div class="fg"><label class="fl">Phone number</label><input class="fi" id="ph-i" placeholder="+1 234 567 8900" oninput="liveGen()"/></div></div>
+              <div id="f-wifi" style="display:none">
+                <div class="fr"><div class="fg"><label class="fl">Network SSID</label><input class="fi" id="wf-s" placeholder="MyNetwork" oninput="liveGen()"/></div><div class="fg"><label class="fl">Password</label><input class="fi" id="wf-p" type="password" placeholder="Password" oninput="liveGen()"/></div></div>
+                <div class="fg"><label class="fl">Security</label><select class="fs" id="wf-t" onchange="liveGen()"><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="nopass">Open</option></select></div>
+              </div>
+              <div id="f-vcard" style="display:none">
+                <div class="fr"><div class="fg"><label class="fl">First name</label><input class="fi" id="vc-f" placeholder="John" oninput="liveGen()"/></div><div class="fg"><label class="fl">Last name</label><input class="fi" id="vc-l" placeholder="Doe" oninput="liveGen()"/></div></div>
+                <div class="fr"><div class="fg"><label class="fl">Phone</label><input class="fi" id="vc-p" placeholder="+1 234 567" oninput="liveGen()"/></div><div class="fg"><label class="fl">Email</label><input class="fi" id="vc-e" placeholder="john@co.com" oninput="liveGen()"/></div></div>
+                <div class="fg"><label class="fl">Organization</label><input class="fi" id="vc-o" placeholder="Acme Corp" oninput="liveGen()"/></div>
+              </div>
+              <div class="sdiv">Customise</div>
+              <div class="crow">
+                <div class="fg"><label class="fl">Foreground</label><div class="cfield" onclick="document.getElementById('fc').click()"><div class="cswatch" id="fgsw"></div><span class="chex" id="fghx">#000000</span><input type="color" id="fc" class="cinput" value="#000000" oninput="updCol('fg',this.value)"/></div></div>
+                <div class="fg"><label class="fl">Background</label><div class="cfield" onclick="document.getElementById('bc').click()"><div class="cswatch" id="bgsw"></div><span class="chex" id="bghx">#ffffff</span><input type="color" id="bc" class="cinput" value="#ffffff" oninput="updCol('bg',this.value)"/></div></div>
+              </div>
+              <div class="fg"><label class="fl">Size (px)</label><div class="srow"><input type="range" class="sslider" id="sz" min="100" max="600" value="300" step="10" oninput="updSz(this.value)"/><span class="sval" id="szv">300</span></div></div>
+              <div class="fg"><label class="fl">Error correction</label>
+                <div class="ecopts">
+                  <div class="ecopt" onclick="setEC(this,'L')"><div class="ecopt-ico">◻</div><div class="ecopt-lbl">Low 7%</div></div>
+                  <div class="ecopt" onclick="setEC(this,'M')"><div class="ecopt-ico">◫</div><div class="ecopt-lbl">Med 15%</div></div>
+                  <div class="ecopt active" onclick="setEC(this,'H')"><div class="ecopt-ico">■</div><div class="ecopt-lbl">High 30%</div></div>
+                </div>
+              </div>
+              <button class="btngen" onclick="genQR()">⚡ Generate QR Code</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="card" style="margin-bottom:14px">
+            <div class="card-hd"><span class="card-title">Preview</span><span class="chip chip-g" id="prev-badge" style="display:none">—</span></div>
+            <div class="card-bd" style="padding:13px">
+              <div class="qr-box"><div id="qr-out"><div class="qr-ph"><div class="qr-ph-ico">⬛</div><div class="qr-ph-txt">Fill in content<br>and hit Generate</div></div></div></div>
+              <div class="meta-box" id="meta-box"><div class="meta-row"><span class="meta-k">Type</span><span class="meta-v" id="m-type">—</span></div><div class="meta-row"><span class="meta-k">Size</span><span class="meta-v" id="m-size">—</span></div><div class="meta-row"><span class="meta-k">Error level</span><span class="meta-v" id="m-ec">—</span></div></div>
+              <div class="actbtns" id="act-btns" style="display:none"><button class="btndl" onclick="dlQR('png')"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1v9M5 7l3 3 3-3M2 13h12"/></svg>PNG</button><button class="btndl" onclick="dlQR('svg')"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 1v9M5 7l3 3 3-3M2 13h12"/></svg>SVG</button></div>
+              <button class="btncopy" id="cpybtn" onclick="cpyQR()" style="display:none"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V2h9"/></svg>Copy to clipboard</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Recent</span><span style="font-size:11px;color:var(--t3)" id="hist-cnt">0 items</span></div>
+            <div class="card-bd" style="padding:9px"><div class="hist-list" id="hist-list"><div class="empty-hist">No QR codes yet.<br>Generate one above!</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><div class="tdot" id="tdot"></div><span id="tmsg">Done!</span></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const DB='qraft_u',SK='qraft_s';
+let curType='url',curEC='H',curSz=300,fgC='#000000',bgC='#ffffff';
+let sesCount=0,hist=[];
+
+document.getElementById('fgsw').style.background=fgC;
+document.getElementById('bgsw').style.background=bgC;
+
+function getU(){try{return JSON.parse(localStorage.getItem(DB)||'[]')}catch(e){return[]}}
+function saveU(u){localStorage.setItem(DB,JSON.stringify(u))}
+function getSes(){try{return JSON.parse(localStorage.getItem(SK)||'null')}catch(e){return null}}
+function saveSes(u){localStorage.setItem(SK,JSON.stringify(u))}
+function clearSes(){localStorage.removeItem(SK)}
+
+function showPage(id){
+  ['pg-login','pg-signup','pg-forgot','pg-dash'].forEach(p=>{
+    const el=document.getElementById(p);
+    if(el)el.style.display=p===id?(p==='pg-dash'?'flex':'flex'):'none';
+  });
+}
+
+function clearErr(p){
+  const e=document.getElementById(p+'-err');if(e)e.classList.remove('show');
+}
+
+function togglePw(id,btn){
+  const inp=document.getElementById(id);const show=inp.type==='password';
+  inp.type=show?'text':'password';
+  btn.innerHTML=show
+    ?'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 2l12 12M6.5 6.7A2.5 2.5 0 019.3 9.5M4.3 4.5C3 5.4 2 6.7 1 8s2.5 5 7 5c1.3 0 2.5-.3 3.5-.8M7 3.1C7.3 3 7.7 3 8 3c4.5 0 7 5 7 5s-.6 1.1-1.7 2.2"/></svg>'
+    :'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z"/><circle cx="8" cy="8" r="2.5"/></svg>';
+}
+
+function checkStr(pw){
+  let s=0;if(pw.length>=8)s++;if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;
+  const c=['','var(--rd)','var(--am)','var(--am)','var(--gr)'];
+  const l=['','Weak','Fair','Good','Strong'];
+  [1,2,3,4].forEach(i=>{document.getElementById('s'+i).style.background=i<=s?c[s]:'var(--bd)';});
+  const lbl=document.getElementById('str-lbl');lbl.textContent=pw.length?l[s]:'';lbl.style.color=c[s]||'var(--t3)';
+}
+
+function doLogin(){
+  const email=document.getElementById('li-email').value.trim();
+  const pass=document.getElementById('li-pass').value;
+  if(!email||!pass){showErr('li','Please enter your email and password.');return;}
+  const users=getU();
+  const user=users.find(u=>u.email.toLowerCase()===email.toLowerCase()&&u.pass===pass);
+  if(!user){showErr('li','Incorrect email or password.');return;}
+  saveSes(user);enterDash(user);
+}
+
+function doSignup(){
+  const first=document.getElementById('su-first').value.trim();
+  const last=document.getElementById('su-last').value.trim();
+  const email=document.getElementById('su-email').value.trim();
+  const pass=document.getElementById('su-pass').value;
+  const conf=document.getElementById('su-conf').value;
+  if(!first||!last||!email||!pass){showErr('su','Please fill in all fields.');return;}
+  if(!/\S+@\S+\.\S+/.test(email)){showErr('su','Enter a valid email address.');return;}
+  if(pass.length<8){showErr('su','Password must be at least 8 characters.');return;}
+  if(pass!==conf){showErr('su','Passwords do not match.');return;}
+  const users=getU();
+  if(users.find(u=>u.email.toLowerCase()===email.toLowerCase())){showErr('su','Account already exists with this email.');return;}
+  const user={id:Date.now(),first,last,email,pass,initials:(first[0]+last[0]).toUpperCase()};
+  users.push(user);saveU(users);saveSes(user);
+  toast('Welcome, '+first+'! Account created.');
+  enterDash(user);
+}
+
+function doForgot(){
+  const email=document.getElementById('fp-email').value.trim();
+  if(!email){return;}
+  toast('Reset link sent to '+email+' (demo)');
+  setTimeout(()=>showPage('pg-login'),1800);
+}
+
+function showErr(p,msg){
+  const e=document.getElementById(p+'-err');
+  if(e){e.textContent=msg;e.classList.add('show');}
+}
+
+function enterDash(user){
+  sesCount=0;hist=[];
+  document.getElementById('sb-av').textContent=user.initials||'U';
+  document.getElementById('sb-name').textContent=user.first+' '+user.last;
+  document.getElementById('sb-email').textContent=user.email;
+  document.getElementById('tb-av').textContent=user.initials||'U';
+  document.getElementById('st-count').textContent='0';
+  document.getElementById('hist-list').innerHTML='<div class="empty-hist">No QR codes yet.<br>Generate one above!</div>';
+  document.getElementById('hist-cnt').textContent='0 items';
+  showPage('pg-dash');
+  toast('Welcome back, '+user.first+'!');
+}
+
+function doLogout(){clearSes();sesCount=0;hist=[];closeSidebar();showPage('pg-login');toast('Signed out.');}
+function demoToast(m){toast(m,'warn');}
+
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sb-overlay').classList.add('open');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sb-overlay').classList.remove('open');
+}
+
+function setNav(el,label){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tb-title').textContent=label;
+  if(window.innerWidth<=900)closeSidebar();
+}
+
+function setType(el,type){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');
+  curType=type;
+  ['url','text','email','phone','wifi','vcard'].forEach(t=>{document.getElementById('f-'+t).style.display=t===type?'block':'none';});
+  resetPrev();liveGen();
+}
+
+function resetPrev(){
+  document.getElementById('qr-out').innerHTML='<div class="qr-ph"><div class="qr-ph-ico">⬛</div><div class="qr-ph-txt">Fill in content<br>and hit Generate</div></div>';
+  document.getElementById('act-btns').style.display='none';
+  document.getElementById('cpybtn').style.display='none';
+  document.getElementById('meta-box').classList.remove('show');
+  document.getElementById('prev-badge').style.display='none';
+}
+
+function buildPayload(){
+  switch(curType){
+    case 'url':return document.getElementById('url-i').value.trim()||null;
+    case 'text':return document.getElementById('txt-i').value.trim()||null;
+    case 'phone':{const p=document.getElementById('ph-i').value.trim();return p?'tel:'+p:null;}
+    case 'email':{const a=document.getElementById('em-a').value.trim();if(!a)return null;const s=document.getElementById('em-s').value.trim();const b=document.getElementById('em-b').value.trim();let u='mailto:'+a;const ps=[];if(s)ps.push('subject='+encodeURIComponent(s));if(b)ps.push('body='+encodeURIComponent(b));if(ps.length)u+='?'+ps.join('&');return u;}
+    case 'wifi':{const s=document.getElementById('wf-s').value.trim();if(!s)return null;const p=document.getElementById('wf-p').value;const t=document.getElementById('wf-t').value;return`WIFI:T:${t};S:${s};P:${p};;`;}
+    case 'vcard':{const f=document.getElementById('vc-f').value.trim();const l=document.getElementById('vc-l').value.trim();if(!f&&!l)return null;const p=document.getElementById('vc-p').value.trim();const e=document.getElementById('vc-e').value.trim();const o=document.getElementById('vc-o').value.trim();let v='BEGIN:VCARD\nVERSION:3.0\n';v+=`N:${l};${f};;;\nFN:${f} ${l}\n`;if(p)v+=`TEL:${p}\n`;if(e)v+=`EMAIL:${e}\n`;if(o)v+=`ORG:${o}\n`;v+='END:VCARD';return v;}
+  }return null;
+}
+
+function liveGen(){clearTimeout(liveGen._t);liveGen._t=setTimeout(()=>{const p=buildPayload();if(p&&p.length>2)genQR(true);},550);}
+
+function genQR(silent=false){
+  const payload=buildPayload();
+  if(!payload){if(!silent)toast('Please fill in the required field.','warn');return;}
+  const out=document.getElementById('qr-out');out.innerHTML='';
+  const wrap=document.createElement('div');
+  wrap.style.cssText='background:'+bgC+';padding:12px;border-radius:8px;display:inline-block';
+  out.appendChild(wrap);
+  try{
+    new QRCode(wrap,{text:payload,width:Math.min(curSz,220),height:Math.min(curSz,220),colorDark:fgC,colorLight:bgC,correctLevel:QRCode.CorrectLevel[curEC]||QRCode.CorrectLevel.H});
+  }catch(e){
+    out.innerHTML='<div class="qr-ph"><div class="qr-ph-ico" style="font-size:28px">⚠</div><div class="qr-ph-txt">Content too long.</div></div>';return;
+  }
+  if(!silent){sesCount++;document.getElementById('st-count').textContent=sesCount;addHist(payload,curType,wrap.innerHTML);toast('QR code generated!');}
+  document.getElementById('act-btns').style.display='grid';
+  document.getElementById('cpybtn').style.display='flex';
+  document.getElementById('meta-box').classList.add('show');
+  const b=document.getElementById('prev-badge');b.style.display='inline-flex';b.textContent=curType.toUpperCase();
+  document.getElementById('m-type').textContent=curType.toUpperCase();
+  document.getElementById('m-size').textContent=curSz+'×'+curSz+' px';
+  document.getElementById('m-ec').textContent={L:'Low (7%)',M:'Medium (15%)',H:'High (30%)'}[curEC];
+  document.getElementById('st-type').textContent=curType.toUpperCase();
+  document.getElementById('st-size').textContent=curSz;
+  document.getElementById('st-ec').textContent=curEC;
+}
+
+function addHist(payload,type,thumbHtml){
+  const label=payload.length>40?payload.slice(0,40)+'…':payload;
+  hist.unshift({label,type,thumb:thumbHtml,time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})});
+  if(hist.length>8)hist.pop();renderHist();
+}
+
+function renderHist(){
+  const list=document.getElementById('hist-list');
+  document.getElementById('hist-cnt').textContent=hist.length+' item'+(hist.length!==1?'s':'');
+  if(!hist.length){list.innerHTML='<div class="empty-hist">No QR codes yet.<br>Generate one above!</div>';return;}
+  list.innerHTML=hist.map((h,i)=>`<div class="hist-item" onclick="restoreHist(${i})"><div class="hist-thumb">${h.thumb}</div><div class="hist-info"><div class="hist-lbl">${esc(h.label)}</div><div class="hist-meta">${h.time}</div></div><div class="hist-badge">${h.type.toUpperCase()}</div></div>`).join('');
+  list.querySelectorAll('.hist-thumb canvas,.hist-thumb img').forEach(el=>{el.style.width='34px';el.style.height='34px';});
+}
+
+function restoreHist(i){
+  const h=hist[i];
+  document.getElementById('qr-out').innerHTML='<div style="background:'+bgC+';padding:12px;border-radius:8px;display:inline-block">'+h.thumb+'</div>';
+  document.getElementById('act-btns').style.display='grid';
+  document.getElementById('cpybtn').style.display='flex';
+  document.getElementById('meta-box').classList.add('show');
+  toast('Loaded from history');
+}
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function updCol(w,v){if(w==='fg'){fgC=v;document.getElementById('fgsw').style.background=v;document.getElementById('fghx').textContent=v;}else{bgC=v;document.getElementById('bgsw').style.background=v;document.getElementById('bghx').textContent=v;}liveGen();}
+function updSz(v){curSz=parseInt(v);document.getElementById('szv').textContent=v;document.getElementById('st-size').textContent=v;liveGen();}
+function setEC(el,l){document.querySelectorAll('.ecopt').forEach(o=>o.classList.remove('active'));el.classList.add('active');curEC=l;document.getElementById('st-ec').textContent=l;liveGen();}
+function getCanvas(){return document.querySelector('#qr-out canvas');}
+
+function dlQR(fmt){
+  const c=getCanvas();if(!c){toast('Generate a QR code first.','warn');return;}
+  if(fmt==='png'){const a=document.createElement('a');a.download='qrcode.png';a.href=c.toDataURL('image/png');a.click();toast('PNG downloaded!');}
+  else{
+    const sz=curSz;const ctx=c.getContext('2d');const d=ctx.getImageData(0,0,c.width,c.height);
+    let s=`<svg xmlns="http://www.w3.org/2000/svg" width="${sz}" height="${sz}" viewBox="0 0 ${c.width} ${c.height}"><rect width="${c.width}" height="${c.height}" fill="${bgC}"/>`;
+    for(let y=0;y<c.height;y++){for(let x=0;x<c.width;x++){const i=(y*c.width+x)*4;if(d.data[i]<128&&d.data[i+1]<128&&d.data[i+2]<128)s+=`<rect x="${x}" y="${y}" width="1" height="1" fill="${fgC}"/>`;}}
+    s+='</svg>';const b=new Blob([s],{type:'image/svg+xml'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.download='qrcode.svg';a.href=u;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);
+    toast('SVG downloaded!');
+  }
+}
+
+function cpyQR(){
+  const c=getCanvas();if(!c){toast('Generate a QR code first.','warn');return;}
+  c.toBlob(blob=>{
+    try{navigator.clipboard.write([new ClipboardItem({'image/png':blob})]).then(()=>{
+      const b=document.getElementById('cpybtn');b.classList.add('ok');
+      b.innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8l3.5 3.5L13 5"/></svg> Copied!';
+      setTimeout(()=>{b.classList.remove('ok');b.innerHTML='<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="5" width="9" height="9" rx="1.5"/><path d="M3 11V2h9"/></svg> Copy to clipboard';},2200);
+      toast('Copied to clipboard!');
+    });}catch(e){toast('Copy not supported here.','warn');}
+  });
+}
+
+function clearAll(){
+  ['url-i','txt-i','em-a','em-s','em-b','ph-i','wf-s','wf-p','vc-f','vc-l','vc-p','vc-e','vc-o'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  resetPrev();toast('Cleared.');
+}
+
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');
+  document.getElementById('tdot').style.background=type==='warn'?'var(--am)':'var(--gr)';
+  document.getElementById('tmsg').textContent=msg;
+  t.classList.add('show');clearTimeout(toast._t);
+  toast._t=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+(function init(){const s=getSes();if(s)enterDash(s);else showPage('pg-login');})();
+</script>
